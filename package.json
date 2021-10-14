@@ -1,0 +1,32 @@
+{
+  "dependencies": {
+    "axios": "^0.23.0",
+    "express": "^4.17.1",
+    "nodemon": "^2.0.13"
+  },
+  "devDependencies": {
+    "eslint": "^7.32.0",
+    "eslint-plugin-react": "^7.26.1",
+    "jest": "^27.2.5"
+  },
+  "name": "reviews-service",
+  "description": "A service dedicated to serving information to the \"Ratings &amp; Reviews\" widget",
+  "version": "1.0.0",
+  "main": ".eslintrc.js",
+  "scripts": {
+    "test": "jest",
+    "coverage": "jest --coverage --verbose",
+    "start": "npx nodemon server/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SDC-Sedeco/Reviews-Service.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/SDC-Sedeco/Reviews-Service/issues"
+  },
+  "homepage": "https://github.com/SDC-Sedeco/Reviews-Service#readme"
+}
