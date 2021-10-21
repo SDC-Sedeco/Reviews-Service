@@ -1,4 +1,4 @@
-var mysql = require('mysql');
+var mysql = require('mysql2');
 // const Sequelize = require('sequelize');
 const secret = require('../secret.json');
 
