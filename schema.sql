@@ -3,15 +3,16 @@ CREATE DATABASE reviewsData;
 USE reviewsData;
 
 CREATE TABLE reviews (
-  id INT PRIMARY KEY,
+  id INT PRIMARY KEY AUTO_INCREMENT,
   product_id INT NOT NULL,
   rating INT NOT NULL,
-  summary TEXT,
+  summary TEXT NOT NULL,
   recommend BOOLEAN NOT NULL DEFAULT FALSE,
   response TEXT DEFAULT NULL,
-  body TEXT,
+  body TEXT NOT NULL,
   date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  reviewer_name TEXT,
+  reviewer_name TEXT NOT NULL,
+  email TEXT NOT NULL,
   helpfulness INT NOT NULL DEFAULT 0
 );
 

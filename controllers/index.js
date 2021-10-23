@@ -10,21 +10,37 @@ module.exports = {
           })
           .catch((err) => {
             console.log(err);
-            res.sendStatus(401);
+            res.sendStatus(400);
           })
       } else {
         res.sendStatus(400);
       }
     },
     post: function(req, res) {
-      models.reviews.post()
-        .then(() => {
-          res.sendStatus(201);
-        })
-        .catch((err) => {
-          console.log(err);
-          res.sendStatus(401);
-        })
+      if (typeof rating === 'string') {
+
+      }
+      if (req.query.product_id !== undefined &&
+          req.query.rating !== undefined &&
+          req.query.summary !== undefined &&
+          req.query.body !== undefined &&
+          req.query.recommend !== undefined &&
+          req.query.name !== undefined &&
+          req.query.email !== undefined &&
+          req.query.photos !== undefined &&
+          req.query.characteristics !== undefined) {
+        models.reviews.post(req.query)
+          .then(() => {
+            res.sendStatus(201);
+          })
+          .catch((err) => {
+            console.log(err);
+            res.sendStatus(400);
+          });
+      } else {
+        console.log(req.query);
+        res.sendStatus(400);
+      }
     },
     helpful: function() {},
     report: function() {}

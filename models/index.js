@@ -17,11 +17,15 @@ module.exports = {
         connection.end();
       });
     },
-    post: function() {
+    post: function(queryParams) {
       return new Promise((resolve, reject) => {
         const connection = db.generateConnection();
         connection.connect();
-        var query = `INSERT INTO reviews (id, product_id, rating, summary, body, reviewer_name) VALUES (10, 11111, 4, "Its ok", "This is a body", "Logan")`;
+        var query = `INSERT INTO reviews
+        (product_id, rating, summary, body, reviewer_name, email)
+        VALUES (
+          ${queryParams.product_id},
+          ${typeof queryParams.rating === 'number' ? queryParams.rating : parseInt(queryParams.rating)}, ${queryParams.summary}, ${queryParams.body}, ${queryParams.name}, ${queryParams.email})`;
         connection.query(query, [], function(err) {
           err ? reject(err) : resolve();
         });
