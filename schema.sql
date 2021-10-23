@@ -13,17 +13,18 @@ CREATE TABLE reviews (
   date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   reviewer_name TEXT NOT NULL,
   email TEXT NOT NULL,
-  helpfulness INT NOT NULL DEFAULT 0
+  helpfulness INT NOT NULL DEFAULT 0,
+  reported BOOLEAN NOT NULL DEFAULT FALSE
 );
 
 CREATE TABLE characteristics (
-  id INT PRIMARY KEY,
+  id INT PRIMARY KEY AUTO_INCREMENT,
   product_id INT NOT NULL,
   name TEXT
 );
 
-CREATE TABLE characteristic_reviews (
-  id INT PRIMARY KEY,
+CREATE TABLE characteristics_reviews (
+  id INT PRIMARY KEY AUTO_INCREMENT,
   review_id INT NOT NULL,
   characteristic_id INT NOT NULL,
   value INT NOT NULL,
@@ -32,7 +33,7 @@ CREATE TABLE characteristic_reviews (
 );
 
 CREATE TABLE photos (
-  id INT PRIMARY KEY,
+  id INT PRIMARY KEY AUTO_INCREMENT,
   url TEXT,
   review_id INT NOT NULL,
   FOREIGN KEY (review_id) REFERENCES reviews (id)
