@@ -3,8 +3,17 @@ var models = require('../models/index.js');
 module.exports = {
   reviews: {
     get: function(req, res) {
-      res.statusCode = '201';
-      res.end();
+      // test code
+      console.log('Getting in the controllers!');
+      models.reviews.get()
+        .then((results) => {
+          console.log(results);
+          res.statusCode = '201';
+          res.send(results);
+        })
+        .catch((err) => {
+          res.status(401).send(err);
+        })
     },
     post: function(req, res) {
       models.reviews.post()
