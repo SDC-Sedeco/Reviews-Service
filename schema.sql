@@ -3,26 +3,28 @@ CREATE DATABASE reviewsData;
 USE reviewsData;
 
 CREATE TABLE reviews (
-  id INT PRIMARY KEY,
+  id INT PRIMARY KEY AUTO_INCREMENT,
   product_id INT NOT NULL,
   rating INT NOT NULL,
-  summary TEXT,
-  recommend BOOLEAN NOT NULL DEFAULT FALSE,
-  response TEXT DEFAULT NULL,
-  body TEXT,
   date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  reviewer_name TEXT,
+  summary TEXT NOT NULL,
+  body TEXT NOT NULL,
+  recommend BOOLEAN NOT NULL DEFAULT FALSE,
+  reported BOOLEAN NOT NULL DEFAULT FALSE,
+  reviewer_name TEXT NOT NULL,
+  reviewer_email TEXT NOT NULL,
+  response TEXT DEFAULT NULL,
   helpfulness INT NOT NULL DEFAULT 0
 );
 
 CREATE TABLE characteristics (
-  id INT PRIMARY KEY,
+  id INT PRIMARY KEY AUTO_INCREMENT,
   product_id INT NOT NULL,
   name TEXT
 );
 
-CREATE TABLE characteristic_reviews (
-  id INT PRIMARY KEY,
+CREATE TABLE characteristics_reviews (
+  id INT PRIMARY KEY AUTO_INCREMENT,
   review_id INT NOT NULL,
   characteristic_id INT NOT NULL,
   value INT NOT NULL,
@@ -31,7 +33,7 @@ CREATE TABLE characteristic_reviews (
 );
 
 CREATE TABLE photos (
-  id INT PRIMARY KEY,
+  id INT PRIMARY KEY AUTO_INCREMENT,
   url TEXT,
   review_id INT NOT NULL,
   FOREIGN KEY (review_id) REFERENCES reviews (id)
