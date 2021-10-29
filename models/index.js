@@ -3,6 +3,7 @@ var db = require('../db/index.js');
 module.exports = {
   reviews: {
     get: function(queryParams) {
+      console.log('here!');
       const count = queryParams.count;
       const page = (queryParams.page - 1) * count;
       return new Promise((resolve, reject) => {
@@ -18,6 +19,7 @@ module.exports = {
           err ? reject(err) : resolve(results);
         });
         connection.end();
+        console.log('here!');
       });
     },
     post: function(queryParams) {
@@ -102,6 +104,7 @@ module.exports = {
   },
   photos: {
     get: function(product_id) {
+      console.log('Inside photos model!');
       return new Promise((resolve, reject) => {
         const connection = db.generateConnection();
         connection.connect();

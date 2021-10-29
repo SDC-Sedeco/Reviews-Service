@@ -1,3 +1,4 @@
 node_modules
 secret.json
 etl_files/
+coverage/

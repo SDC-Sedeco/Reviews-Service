@@ -15,7 +15,8 @@ module.exports = {
           .then((reviewResults) => {
             models.photos.get(params.product_id)
               .then((photosResults) => {
-                let package = {
+                console.log("After photos!");
+                let returnPackage = {
                   "product_id": params.product_id.toString(),
                   "page": params.page,
                   "count": params.count,
@@ -32,7 +33,7 @@ module.exports = {
                     return {...review, recommend: review.recommend > 0, photos: photos};
                   })
                 };
-                res.status(200).send(package);
+                res.status(200).send(returnPackage);
               })
               .catch((err) => {
                 console.log(err);
