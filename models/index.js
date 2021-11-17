@@ -3,23 +3,22 @@ var db = require('../db/index.js');
 module.exports = {
   reviews: {
     get: function(queryParams) {
-      console.log('here!');
       const count = queryParams.count;
       const page = (queryParams.page - 1) * count;
       return new Promise((resolve, reject) => {
         const connection = db.generateConnection();
         connection.connect();
         var query = `SELECT r.id AS review_id,
-        r.rating, r.summary, r.recommend, r.response, r.body, r.date, r.reviewer_name, r.helpfulness
+        r.rating, r.summary, r.recommend, r.response, r.body, FROM_UNIXTIME(CONVERT(r.date, UNSIGNED INT) / 1000) as date, r.reviewer_name, r.helpfulness
         FROM reviews AS r
         WHERE r.product_id = ${queryParams.product_id}
+        AND r.reported != 1
         LIMIT ${page}, ${count}`;
 
         connection.query(query, [], function(err, results) {
           err ? reject(err) : resolve(results);
         });
         connection.end();
-        console.log('here!');
       });
     },
     post: function(queryParams) {
@@ -29,10 +28,11 @@ module.exports = {
       return new Promise((resolve, reject) => {
         // Log the review itself
         let reviewInsertQuery = `INSERT INTO reviews
-        (product_id, rating, summary, body, reviewer_name, email)
+        (product_id, rating, date, summary, body, reviewer_name, email)
         VALUES (
           ${queryParams.product_id},
           ${typeof queryParams.rating === 'number' ? queryParams.rating : parseInt(queryParams.rating)},
+          ${Date.now()},
           ${queryParams.summary},
           ${queryParams.body},
           ${queryParams.name},
@@ -93,28 +93,54 @@ module.exports = {
         connection.end();
       });
     },
-    helpful: function() {},
-    report: function() {}
+    helpful: function(review_id) {
+      const connection = db.generateConnection();
+      connection.connect();
+      var query = `UPDATE reviews SET helpfulness = helpfulness + 1 WHERE id = ${review_id}`;
+      connection.query(query, [], function(err, results) {
+        err ? reject(err) : resolve(results);
+      });
+      connection.end();
+    },
+    report: function(review_id) {
+      const connection = db.generateConnection();
+      connection.connect();
+      var query = `UPDATE reviews SET reported = TRUE WHERE id = ${review_id}`;
+      connection.query(query, [], function(err, results) {
+        err ? reject(err) : resolve(results);
+      });
+      connection.end();
+    }
   },
   meta: {
-    get: function(product_id) {}
+    get: function(product_id) {
+      return new Promise((resolve, reject) => {
+        const connection = db.generateConnection();
+        connection.connect();
+        var query = `SELECT rating, count(*) as count,
+        sum(recommend=0) as "Recommend_False", sum(recommend=1) as "Recommend_True"
+        FROM reviews WHERE product_id = ${product_id}
+        GROUP BY rating ORDER BY rating`;
+        connection.query(query, [], function(err, results) {
+          err ? reject(err) : resolve(results);
+        });
+        connection.end();
+      })
+    }
   },
   characteristics_reviews: {
     get: function(review_id) {}
   },
   photos: {
     get: function(product_id) {
-      console.log('Inside photos model!');
       return new Promise((resolve, reject) => {
         const connection = db.generateConnection();
         connection.connect();
-        // var query = `SELECT * FROM photos
-        // WHERE review_id = ${review_id}`;
         var query = `SELECT r.product_id, r.id AS review_id, p.url AS photo_url, p.id AS photo_id
         FROM reviews AS r
         LEFT JOIN photos AS p
         ON r.id = p.review_id
-        WHERE product_id = ${product_id}
+        WHERE product_id = ${product_id} AND p.id IS NOT NULL
         ORDER BY photo_id`;
         connection.query(query, [], function(err, results) {
           err ? reject(err) : resolve(results);
