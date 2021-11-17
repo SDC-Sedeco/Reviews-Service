@@ -49,9 +49,6 @@ module.exports = {
     }
   },
   post: function(req, res) {
-    // if (typeof rating === 'string') {
-
-    // }
     if (req.query.product_id !== undefined &&
         req.query.rating !== undefined &&
         req.query.summary !== undefined &&
@@ -79,10 +76,23 @@ module.exports = {
       models.reviews.helpful(req.query.review_id)
         .then(() => {
           res.sendStatus(204);
-        });
+        })
+        .catch((err) => {
+          console.log(err);
+          res.sendStatus(400);
+        });;
     }
   },
   report: function(req, res) {
-
+    if (req.query.review_id !== undefined) {
+      models.reviews.report(req.query.review_id)
+        .then(() => {
+          res.sendStatus(204);
+        })
+        .catch((err) => {
+          console.log(err);
+          res.sendStatus(400);
+        });;
+    }
   }
 }

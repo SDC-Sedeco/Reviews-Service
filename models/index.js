@@ -128,9 +128,6 @@ module.exports = {
       })
     }
   },
-  characteristics_reviews: {
-    get: function(review_id) {}
-  },
   photos: {
     get: function(product_id) {
       return new Promise((resolve, reject) => {
