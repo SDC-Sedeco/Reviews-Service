@@ -22,7 +22,9 @@
   "scripts": {
     "test": "jest",
     "coverage": "jest --coverage --verbose",
-    "start": "npx nodemon server/startServer.js"
+    "start": "npx nodemon server/startServer.js",
+    "smoke-test": "k6 run spec/GET.spec.px.js -e TYPE=smoke",
+    "stress-test": "k6 run spec/GET.spec.px.js -e TYPE=stress"
   },
   "repository": {
     "type": "git",
