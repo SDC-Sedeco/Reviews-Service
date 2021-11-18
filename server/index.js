@@ -12,7 +12,7 @@ app.use(parser.json());
 app.use('/reviews', router);
 
 app.get('/loaderio*', (req, res) => {
-  res.status(200).send('loaderio-53bd3fe83f6e107449f0c80c9da4d8d1');
+  res.status(200).send('loaderio-b7ad4fe06c9b56b2b510879600c55906');
 });
 
 module.exports = app;
