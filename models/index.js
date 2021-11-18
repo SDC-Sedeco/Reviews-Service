@@ -1,4 +1,4 @@
-var db = require('../db/index.js');
+var connection = require('../db/index.js');
 
 module.exports = {
   reviews: {
@@ -6,8 +6,6 @@ module.exports = {
       const count = queryParams.count;
       const page = (queryParams.page - 1) * count;
       return new Promise((resolve, reject) => {
-        const connection = db.generateConnection();
-        connection.connect();
         var query = `SELECT r.id AS review_id,
         r.rating, r.summary, r.recommend, r.response, r.body, FROM_UNIXTIME(CONVERT(r.date, UNSIGNED INT) / 1000) as date, r.reviewer_name, r.helpfulness
         FROM reviews AS r
@@ -18,13 +16,9 @@ module.exports = {
         connection.query(query, [], function(err, results) {
           err ? reject(err) : resolve(results);
         });
-        connection.end();
       });
     },
     post: function(queryParams) {
-      const connection = db.generateConnection();
-      connection.connect();
-
       return new Promise((resolve, reject) => {
         // Log the review itself
         let reviewInsertQuery = `INSERT INTO reviews
@@ -87,36 +81,27 @@ module.exports = {
           }
         })
       }).then(() => {
-        connection.end();
+        // connection.end();
       }).catch((err) => {
         console.log(err);
-        connection.end();
       });
     },
     helpful: function(review_id) {
-      const connection = db.generateConnection();
-      connection.connect();
       var query = `UPDATE reviews SET helpfulness = helpfulness + 1 WHERE id = ${review_id}`;
       connection.query(query, [], function(err, results) {
         err ? reject(err) : resolve(results);
       });
-      connection.end();
     },
     report: function(review_id) {
-      const connection = db.generateConnection();
-      connection.connect();
       var query = `UPDATE reviews SET reported = TRUE WHERE id = ${review_id}`;
       connection.query(query, [], function(err, results) {
         err ? reject(err) : resolve(results);
       });
-      connection.end();
     }
   },
   meta: {
     get: function(product_id) {
       return new Promise((resolve, reject) => {
-        const connection = db.generateConnection();
-        connection.connect();
         var query = `SELECT rating, count(*) as count,
         sum(recommend=0) as "Recommend_False", sum(recommend=1) as "Recommend_True"
         FROM reviews WHERE product_id = ${product_id}
@@ -124,15 +109,12 @@ module.exports = {
         connection.query(query, [], function(err, results) {
           err ? reject(err) : resolve(results);
         });
-        connection.end();
       })
     }
   },
   photos: {
     get: function(product_id) {
       return new Promise((resolve, reject) => {
-        const connection = db.generateConnection();
-        connection.connect();
         var query = `SELECT r.product_id, r.id AS review_id, p.url AS photo_url, p.id AS photo_id
         FROM reviews AS r
         LEFT JOIN photos AS p
@@ -142,7 +124,6 @@ module.exports = {
         connection.query(query, [], function(err, results) {
           err ? reject(err) : resolve(results);
         });
-        connection.end();
       })
     }
   }
