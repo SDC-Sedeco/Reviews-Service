@@ -5,8 +5,8 @@ const { getOrSetCache, removeProductFromCache } = require('../db/redis.js');
 
 module.exports = {
   get: async function(req, res) {
-    if (req.query.sort && req.query.product_id) {
-      const reviewsData = getOrSetCache(`reviews?product_id=${req.query.product_id}&sort=${req.query.sort}`, () => {
+    if (req.query.product_id) {
+      const reviewsData = getOrSetCache(`reviews?product_id=${req.query.product_id}&sort=${req.query.sort || 'newest'}`, () => {
         return new Promise((resolve, reject) => {
           const params = {
             product_id: req.query.product_id,
