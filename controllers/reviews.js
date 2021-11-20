@@ -1,19 +1,21 @@
 var models = require('../models/index.js');
 
-module.exports = {
-  get: function(req, res) {
-    if (req.query.sort && req.query.product_id) {
-      const params = {
-        product_id: req.query.product_id,
-        sort: req.query.sort,
-        page: Math.max(parseInt(req.query.page) || 1, 1),
-        count: parseInt(req.query.count) || 5
-      };
+// Import helper function to check cache first
+const { getOrSetCache, removeProductFromCache } = require('../db/redis.js');
 
-      models.reviews.get(params)
-        .then((reviewResults) => {
-          models.photos.get(params.product_id)
-            .then((photosResults) => {
+module.exports = {
+  get: async function(req, res) {
+    if (req.query.sort && req.query.product_id) {
+      const reviewsData = getOrSetCache(`reviews?product_id=${req.query.product_id}&sort=${req.query.sort}`, () => {
+        return new Promise((resolve, reject) => {
+          const params = {
+            product_id: req.query.product_id,
+            sort: req.query.sort,
+            page: Math.max(parseInt(req.query.page) || 1, 1),
+            count: parseInt(req.query.count) || 5
+          };
+          models.reviews.get(params).then((reviewResults) => {
+            models.photos.get(params.product_id).then((photosResults) => {
               let returnPackage = {
                 "product_id": params.product_id.toString(),
                 "page": params.page,
@@ -28,22 +30,27 @@ module.exports = {
                         url: photo.photo_url
                       });
                     }
-                  })
-
+                  });
                   return {...review, recommend: review.recommend > 0, photos: photos};
                 })
               };
-              res.status(200).send(returnPackage);
+              resolve(returnPackage);
             })
-            .catch((err) => {
-              console.log(err);
-              res.sendStatus(400);
+            .catch(() => {
+              reject(400);
             });
+          })
+          .catch(() => {
+            reject(400);
+          });
+        }).then((data) => {
+          return data;
+        }).catch((errorCode) => {
+          res.sendStatus(errorCode);
         })
-        .catch((err) => {
-          console.log(err);
-          res.sendStatus(400);
-        });
+      });
+
+      reviewsData.then(data =>  res.status(200).send(data));
     } else {
       res.sendStatus(400);
     }
@@ -60,6 +67,8 @@ module.exports = {
         req.query.characteristics !== undefined) {
       models.reviews.post(req.query)
         .then(() => {
+          // Remove product data from cache to avoid any incorrect data being sent back
+          removeProductFromCache(req.query.product_id);
           res.sendStatus(201);
         })
         .catch((err) => {
@@ -80,7 +89,7 @@ module.exports = {
         .catch((err) => {
           console.log(err);
           res.sendStatus(400);
-        });;
+        });
     }
   },
   report: function(req, res) {
@@ -92,7 +101,7 @@ module.exports = {
         .catch((err) => {
           console.log(err);
           res.sendStatus(400);
-        });;
+        });
     }
   }
 }

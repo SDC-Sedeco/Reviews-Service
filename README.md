@@ -8,5 +8,7 @@ A service dedicated to serving information to the "Ratings &amp; Reviews" widget
   - <code>DB_HOST</code>: The ip address of the Database (provided upon request)
   - <code>DB_USER</code>: The username of the Database profile (provided upon request)
   - <code>DB_PW</code>: The password of the Database profile (provided upon request)
+  - <code>REDIS_HOST</code>: The ip address of the redis cache (provided upon request)
+  - <code>REDIS_PW</code>: The password of the redis cache for AUTH (provided upon request)
   - Optional, <code>SERVER_PORT</code>: The port to run the server on. Defaults to 3000
-4. Run <code>DB_HOST=host_ip DB_USER=user DB_PW=pw node server/startServer.js</code>
+4. Run <code>DB_HOST=host_ip DB_USER=user DB_PW=pw REDIS_HOST=redis_ip REDIS_PW=rpw node server/startServer.js</code>

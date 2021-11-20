@@ -112,6 +112,23 @@ module.exports = {
       })
     }
   },
+  characteristics: {
+    get: function(product_id) {
+      return new Promise((resolve, reject) => {
+        var query = `SELECT c.name, cr.characteristic_id, AVG(cr.value) as value
+        FROM reviews r
+        INNER JOIN characteristics_reviews cr
+        ON r.product_id = ${product_id}
+        AND r.id = cr.review_id
+        INNER JOIN characteristics c
+        ON cr.characteristic_id = c.id
+        GROUP BY c.name, cr.characteristic_id;`;
+        connection.query(query, [], function(err, results) {
+          err ? reject(err) : resolve(results);
+        });
+      })
+    }
+  },
   photos: {
     get: function(product_id) {
       return new Promise((resolve, reject) => {
